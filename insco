@@ -1,0 +1,61 @@
+#!/bin/sh
+
+BINARY_DIR="$HOME/bin"
+PREFIX_DIR="$HOME/usr/local"
+SUPPORTS=("emacs" "vim")
+TARGET=$1
+
+function usage() {
+  cat <<EOS
+Usage:
+ $ $0 target [version]
+EOS
+}
+
+function setup() {
+  if [ ! -d $BINARYDIR ]
+  then
+    mkdir $BINARYDIR
+  fi
+
+  if [ ! -d $PREFIX_DIR ]
+  then
+    mkdir -p $PREFIX_DIR
+  fi
+}
+
+function emacs() {
+  LATEST_VERSION="24.5"
+  MIRROR_LIST_URL="http://ftpmirror.gnu.org/emacs/"
+
+  setup
+  echo "Write an emacs installation instructions here"
+}
+
+function vim() {
+  setup
+  echo "Write an vim install script here"
+}
+
+if [ "$TARGET" == "" ]
+then
+  usage
+  exit 0
+fi
+
+case $TARGET in
+  emacs)
+    emacs
+    ;;
+  vim)
+    vim
+    ;;
+  *)
+    echo "[Error] Not support $TARGET"
+    echo "  Support: "
+    for s in "${SUPPORTS[@]}"
+    do
+      echo "    $s"
+    done
+    ;;
+esac
