@@ -42,11 +42,12 @@ function emacs() {
     make
     make install
 
-    if [ -f $BINARYDIR/emacs ]
+    
+    if [ -f $BINARY_DIR/emacs ]
     then
-        mv $BINARYDIR/emacs $BINARYDIR/emacs.org
+        mv $BINARY_DIR/emacs $BINARY_DIR/emacs.org
     fi
-    ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARYDIR/emacs
+    ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARY_DIR/emacs
 }
 
 function vim() {
