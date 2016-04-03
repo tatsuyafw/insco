@@ -6,56 +6,73 @@ SUPPORTS=("emacs" "vim")
 TARGET=$1
 
 function usage() {
-  cat <<EOS
+    cat <<EOS
 Usage:
  $ $0 target [version]
 EOS
 }
 
 function setup() {
-  if [ ! -d $BINARYDIR ]
-  then
-    mkdir $BINARYDIR
-  fi
+    if [ ! -d $BINARYDIR ]
+    then
+        mkdir $BINARYDIR
+    fi
 
-  if [ ! -d $PREFIX_DIR ]
-  then
-    mkdir -p $PREFIX_DIR
-  fi
+    if [ ! -d $PREFIX_DIR ]
+    then
+        mkdir -p $PREFIX_DIR
+    fi
 }
 
 function emacs() {
-  LATEST_VERSION="24.5"
-  MIRROR_LIST_URL="http://ftpmirror.gnu.org/emacs/"
+    LATEST_VERSION="24.5"
+    CONTENT="emacs-${LATEST_VERSION}"
+    ARCH_FILE="${CONTENT}.tar.gz"
+    MIRROR_LIST_URL="http://ftpmirror.gnu.org/emacs"
+    FLAGS="--without-x"
 
-  setup
-  echo "Write an emacs installation instructions here"
+    setup
+
+    TMP_DIR=$(mktemp -d)
+    wget "${MIRROR_LIST_URL}/${ARCH_FILE}" -O "${TMP_DIR}/${ARCH_FILE}"
+    tar zxf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
+    cd $TMP_DIR/$CONTENT
+
+    ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
+    make
+    make install
+
+    if [ -f $BINARYDIR/emacs ]
+    then
+        mv $BINARYDIR/emacs $BINARYDIR/emacs.org
+    fi
+    ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARYDIR/emacs
 }
 
 function vim() {
-  setup
-  echo "Write an vim install script here"
+    setup
+    echo "Write an vim install script here"
 }
 
 if [ "$TARGET" == "" ]
 then
-  usage
-  exit 0
+    usage
+    exit 0
 fi
 
 case $TARGET in
-  emacs)
-    emacs
-    ;;
-  vim)
-    vim
-    ;;
-  *)
-    echo "[Error] Not support $TARGET"
-    echo "  Support: "
-    for s in "${SUPPORTS[@]}"
-    do
-      echo "    $s"
-    done
-    ;;
+    emacs)
+        emacs
+        ;;
+    vim)
+        vim
+        ;;
+    *)
+        echo "[Error] Not support $TARGET"
+        echo "  Support: "
+        for s in "${SUPPORTS[@]}"
+        do
+            echo "    $s"
+        done
+        ;;
 esac
