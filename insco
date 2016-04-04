@@ -52,7 +52,7 @@ function emacs() {
     cd $TMP_DIR/$CONTENT
 
     ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
-    make
+    make -j2
     make install
     
     if [ -f $BINARY_DIR/emacs ]
