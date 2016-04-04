@@ -54,7 +54,7 @@ function emacs() {
     ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
     make -j2
     make install
-    
+
     if [ -f $BINARY_DIR/emacs ]
     then
         mv $BINARY_DIR/emacs $BINARY_DIR/emacs.org
@@ -63,8 +63,29 @@ function emacs() {
 }
 
 function vim() {
+    LATEST_VERSION="7.4"
+    CONTENT="vim-${LATEST_VERSION}"
+    ARCH_FILE="${CONTENT}.tar.bz2"
+    ARCH_DIR="vim"$(echo $LATEST_VERSION | tr -d '.')
+    ARCH_URL="http://ftp.vim.org/pub/vim/unix"
+    FLAGS=""
+
     setup
-    echo "Write an vim install script here"
+
+    TMP_DIR=$(mktemp -d)
+    ${FETCH_CMD} ${TMP_DIR}/${ARCH_FILE} ${ARCH_URL}/${ARCH_FILE}
+    tar xf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
+    cd $TMP_DIR/$ARCH_DIR
+
+    ./configure --prefix=$PREFIX_DIR/$ARCH_DIR $FLAGS
+    make -j2
+    make install
+
+    if [ -f $BINARY_DIR/vim -o -h $BINARY_DIR/vim ]
+    then
+        mv $BINARY_DIR/vim $BINARY_DIR/vim.org
+    fi
+    ln -s $PREFIX_DIR/$ARCH_DIR/bin/vim $BINARY_DIR/vim
 }
 
 if [ "$TARGET" == "" ]
