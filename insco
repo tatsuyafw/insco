@@ -13,9 +13,9 @@ EOS
 }
 
 function setup() {
-    if [ ! -d $BINARYDIR ]
+    if [ ! -d $BINARY_DIR ]
     then
-        mkdir $BINARYDIR
+        mkdir $BINARY_DIR
     fi
 
     if [ ! -d $PREFIX_DIR ]
