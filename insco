@@ -5,6 +5,19 @@ PREFIX_DIR="$HOME/usr/local"
 SUPPORTS=("emacs" "vim")
 TARGET=$1
 
+FETCH_CMD=""
+
+if type wget 2> /dev/null 1> /dev/null
+then
+    FETCH_CMD="wget -O"
+elif type curl 2> /dev/null 1> /dev/null
+then
+    FETCH_CMD="curl -L -o"
+else
+    echo "[ERROR]: Install wget or curl."
+    exit 1
+fi
+
 function usage() {
     cat <<EOS
 Usage:
@@ -34,14 +47,13 @@ function emacs() {
     setup
 
     TMP_DIR=$(mktemp -d)
-    wget "${MIRROR_LIST_URL}/${ARCH_FILE}" -O "${TMP_DIR}/${ARCH_FILE}"
+    ${FETCH_CMD} ${TMP_DIR}/${ARCH_FILE} ${MIRROR_LIST_URL}/${ARCH_FILE}
     tar zxf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
     cd $TMP_DIR/$CONTENT
 
     ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
     make
     make install
-
     
     if [ -f $BINARY_DIR/emacs ]
     then
