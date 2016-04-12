@@ -5,7 +5,7 @@ set -u
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
 SUPPORTS=("emacs" "git" "vim")
-TARGET=$1
+TARGET=${1:-}
 
 FETCH_CMD=""
 
