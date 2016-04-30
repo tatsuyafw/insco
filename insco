@@ -2,7 +2,7 @@
 
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
-SUPPORTS=("emacs" "vim")
+SUPPORTS=("emacs" "git" "vim")
 TARGET=$1
 
 FETCH_CMD=""
@@ -62,6 +62,35 @@ function emacs() {
     ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARY_DIR/emacs
 }
 
+function git() {
+    LATEST_VERSION="2.8.2"
+    CONTENT="git-${LATEST_VERSION}"
+    ARCH_FILE="v${LATEST_VERSION}.tar.gz"
+    # ARCH_DIR="vim"$(echo $LATEST_VERSION | tr -d '.')
+    #https://github.com/git/git/archive/v2.8.2.tar.gz
+    ARCH_URL="https://github.com/git/git/archive"
+    FLAGS=""
+
+    setup
+
+    TMP_DIR=$(mktemp -d)
+    ${FETCH_CMD} ${TMP_DIR}/${ARCH_FILE} ${ARCH_URL}/${ARCH_FILE}
+    tar xf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
+    cd $TMP_DIR/$CONTENT
+
+    exit
+
+    ./configure --prefix=$PREFIX_DIR/$ARCH_DIR $FLAGS
+    make -j2
+    make install
+
+    if [ -f $BINARY_DIR/vim -o -h $BINARY_DIR/vim ]
+    then
+        mv $BINARY_DIR/vim $BINARY_DIR/vim.org
+    fi
+    ln -s $PREFIX_DIR/$ARCH_DIR/bin/vim $BINARY_DIR/vim
+}
+
 function vim() {
     LATEST_VERSION="7.4"
     CONTENT="vim-${LATEST_VERSION}"
@@ -97,6 +126,9 @@ fi
 case $TARGET in
     emacs)
         emacs
+        ;;
+    git)
+        git
         ;;
     vim)
         vim
