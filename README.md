@@ -1,5 +1,4 @@
-insco (WIP)
-=====
+# insco
 
 insco is an installer for CLI developer tools, emacs, vim.
 insco installs tools locally instead of system-wide.
