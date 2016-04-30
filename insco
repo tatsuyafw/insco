@@ -14,7 +14,7 @@ elif type curl 2> /dev/null 1> /dev/null
 then
     FETCH_CMD="curl -L -o"
 else
-    echo "[ERROR]: Install wget or curl."
+    echo "[Error]: Install wget or curl."
     exit 1
 fi
 
@@ -66,8 +66,6 @@ function git() {
     LATEST_VERSION="2.8.2"
     CONTENT="git-${LATEST_VERSION}"
     ARCH_FILE="v${LATEST_VERSION}.tar.gz"
-    # ARCH_DIR="vim"$(echo $LATEST_VERSION | tr -d '.')
-    #https://github.com/git/git/archive/v2.8.2.tar.gz
     ARCH_URL="https://github.com/git/git/archive"
     FLAGS=""
 
@@ -78,17 +76,16 @@ function git() {
     tar xf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
     cd $TMP_DIR/$CONTENT
 
-    exit
-
-    ./configure --prefix=$PREFIX_DIR/$ARCH_DIR $FLAGS
+    make configure
+    ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
     make -j2
     make install
 
-    if [ -f $BINARY_DIR/vim -o -h $BINARY_DIR/vim ]
+    if [ -f $BINARY_DIR/git -o -h $BINARY_DIR/git ]
     then
-        mv $BINARY_DIR/vim $BINARY_DIR/vim.org
+        mv $BINARY_DIR/git $BINARY_DIR/git.org
     fi
-    ln -s $PREFIX_DIR/$ARCH_DIR/bin/vim $BINARY_DIR/vim
+    ln -s $PREFIX_DIR/$ARCH_DIR/bin/git $BINARY_DIR/git
 }
 
 function vim() {
