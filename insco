@@ -2,7 +2,7 @@
 
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
-SUPPORTS=("emacs" "vim")
+SUPPORTS=("emacs" "git" "vim")
 TARGET=$1
 
 FETCH_CMD=""
@@ -14,7 +14,7 @@ elif type curl 2> /dev/null 1> /dev/null
 then
     FETCH_CMD="curl -L -o"
 else
-    echo "[ERROR]: Install wget or curl."
+    echo "[Error]: Install wget or curl."
     exit 1
 fi
 
@@ -62,6 +62,32 @@ function emacs() {
     ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARY_DIR/emacs
 }
 
+function git() {
+    LATEST_VERSION="2.8.2"
+    CONTENT="git-${LATEST_VERSION}"
+    ARCH_FILE="v${LATEST_VERSION}.tar.gz"
+    ARCH_URL="https://github.com/git/git/archive"
+    FLAGS=""
+
+    setup
+
+    TMP_DIR=$(mktemp -d)
+    ${FETCH_CMD} ${TMP_DIR}/${ARCH_FILE} ${ARCH_URL}/${ARCH_FILE}
+    tar xf $TMP_DIR/$ARCH_FILE -C $TMP_DIR
+    cd $TMP_DIR/$CONTENT
+
+    make configure
+    ./configure --prefix=$PREFIX_DIR/$CONTENT $FLAGS
+    make -j2
+    make install
+
+    if [ -f $BINARY_DIR/git -o -h $BINARY_DIR/git ]
+    then
+        mv $BINARY_DIR/git $BINARY_DIR/git.org
+    fi
+    ln -s $PREFIX_DIR/$ARCH_DIR/bin/git $BINARY_DIR/git
+}
+
 function vim() {
     LATEST_VERSION="7.4"
     CONTENT="vim-${LATEST_VERSION}"
@@ -97,6 +123,9 @@ fi
 case $TARGET in
     emacs)
         emacs
+        ;;
+    git)
+        git
         ;;
     vim)
         vim
