@@ -85,7 +85,7 @@ function git() {
     then
         mv $BINARY_DIR/git $BINARY_DIR/git.org
     fi
-    ln -s $PREFIX_DIR/$ARCH_DIR/bin/git $BINARY_DIR/git
+    ln -s $PREFIX_DIR/$CONTENT/bin/git $BINARY_DIR/git
 }
 
 function vim() {
