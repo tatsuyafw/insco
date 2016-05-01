@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
 SUPPORTS=("emacs" "git" "vim")
