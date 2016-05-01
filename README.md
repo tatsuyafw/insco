@@ -28,4 +28,4 @@ You can specify a version.
 - Vim
 
 ### Version Control Systems
-- WIP
+- Git
