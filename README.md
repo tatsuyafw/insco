@@ -15,7 +15,7 @@ insco installs tools to $HOME/bin. You need to append $HOME/bin to $PATH.
  $ insco vim
 ```
 
-You can specify a version.
+You can specify a version (WIP).
 
 ```shell
  $ insco vim 7.4
