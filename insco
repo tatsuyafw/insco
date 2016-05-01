@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
