@@ -1,4 +1,4 @@
-# insco
+# insco [![Build Status][travis-image]][travis-url]
 
 insco is an installer for CLI developer tools, emacs, vim.
 insco installs tools locally instead of system-wide.
@@ -29,3 +29,7 @@ You can specify a version (WIP).
 
 ### Version Control Systems
 - Git
+
+
+[travis-image]: https://img.shields.io/travis/tatsuyafw/insco.svg
+[travis-url]: https://travis-ci.org/tatsuyafw/insco
