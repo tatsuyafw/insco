@@ -139,5 +139,6 @@ case $TARGET in
         do
             echo "    $s"
         done
+        exit 1
         ;;
 esac
