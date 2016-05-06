@@ -6,6 +6,7 @@ BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
 SUPPORTS=("emacs" "git" "vim")
 TARGET=${1:-}
+VERSION=${2:-}
 
 FETCH_CMD=""
 
@@ -40,8 +41,8 @@ function setup() {
 }
 
 function emacs() {
-    LATEST_VERSION="24.5"
-    CONTENT="emacs-${LATEST_VERSION}"
+    TARGET_VERSION=${VERSION:-24.5}
+    CONTENT="emacs-${TARGET_VERSION}"
     ARCH_FILE="${CONTENT}.tar.gz"
     MIRROR_LIST_URL="http://ftpmirror.gnu.org/emacs"
     FLAGS="--without-x"
@@ -65,9 +66,9 @@ function emacs() {
 }
 
 function git() {
-    LATEST_VERSION="2.8.2"
-    CONTENT="git-${LATEST_VERSION}"
-    ARCH_FILE="v${LATEST_VERSION}.tar.gz"
+    TARGET_VERSION=${VERSION:-2.8.2}
+    CONTENT="git-${TARGET_VERSION}"
+    ARCH_FILE="v${TARGET_VERSION}.tar.gz"
     ARCH_URL="https://github.com/git/git/archive"
     FLAGS=""
 
@@ -91,10 +92,10 @@ function git() {
 }
 
 function vim() {
-    LATEST_VERSION="7.4"
-    CONTENT="vim-${LATEST_VERSION}"
+    TARGET_VERSION=${VERSION:-7.4}
+    CONTENT="vim-${TARGET_VERSION}"
     ARCH_FILE="${CONTENT}.tar.bz2"
-    ARCH_DIR="vim"$(echo $LATEST_VERSION | tr -d '.')
+    ARCH_DIR="vim"$(echo $TARGET_VERSION | tr -d '.')
     ARCH_URL="http://ftp.vim.org/pub/vim/unix"
     FLAGS=""
 
