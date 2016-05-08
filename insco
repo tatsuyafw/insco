@@ -4,7 +4,7 @@ set -u
 
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
-SUPPORTS=("emacs" "git" "vim")
+SUPPORTS=("emacs" "ghq" "git" "peco" "vim")
 TARGET=${1:-}
 VERSION=${2:-}
 
@@ -63,6 +63,28 @@ function emacs() {
         mv $BINARY_DIR/emacs $BINARY_DIR/emacs.org
     fi
     ln -s $PREFIX_DIR/$CONTENT/bin/emacs $BINARY_DIR/emacs
+}
+
+function ghq() {
+    TARGET_VERSION=${VERSION:-0.7.4}
+    CONTENT="ghq_linux_amd64"
+    ARCH_FILE="${CONTENT}.zip"
+    ARCH_URL="https://github.com/motemen/ghq/releases/download/v${TARGET_VERSION}"
+
+    setup
+
+    TMP_DIR=$(mktemp -d)
+    ${FETCH_CMD} ${TMP_DIR}/${ARCH_FILE} ${ARCH_URL}/${ARCH_FILE}
+    unzip $TMP_DIR/$ARCH_FILE -d $TMP_DIR
+
+    mkdir $PREFIX_DIR/ghq-${TARGET_VERSION}
+    cp $TMP_DIR/ghq $PREFIX_DIR/ghq-${TARGET_VERSION}
+
+    if [ -f $BINARY_DIR/ghq -o -h $BINARY_DIR/ghq ]
+    then
+        mv $BINARY_DIR/ghq $BINARY_DIR/ghq.org
+    fi
+    ln -s $PREFIX_DIR/ghq-${TARGET_VERSION}/ghq $BINARY_DIR/ghq
 }
 
 function git() {
@@ -148,6 +170,9 @@ fi
 case $TARGET in
     emacs)
         emacs
+        ;;
+    ghq)
+        ghq
         ;;
     git)
         git
