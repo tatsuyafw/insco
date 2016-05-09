@@ -30,6 +30,9 @@ You can specify a version (WIP).
 ### Version Control Systems
 - Git
 
+### Tools
+- [peco](https://github.com/peco/peco)
+  - Interactive filtering tool
 
 [travis-image]: https://img.shields.io/travis/tatsuyafw/insco.svg
 [travis-url]: https://travis-ci.org/tatsuyafw/insco
