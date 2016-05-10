@@ -33,6 +33,8 @@ You can specify a version (WIP).
 ### Tools
 - [peco](https://github.com/peco/peco)
   - Interactive filtering tool
+- [ghq](https://github.com/motemen/ghq)
+  - Manage remote repository clones
 
 [travis-image]: https://img.shields.io/travis/tatsuyafw/insco.svg
 [travis-url]: https://travis-ci.org/tatsuyafw/insco
