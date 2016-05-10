@@ -1,6 +1,6 @@
 # insco [![Build Status][travis-image]][travis-url]
 
-insco is an installer for CLI developer tools, emacs, vim.
+insco is an installer for CLI developer tools, emacs, vim and so on.
 insco installs tools locally instead of system-wide.
 
 ## Usage
@@ -15,7 +15,7 @@ insco installs tools to $HOME/bin. You need to append $HOME/bin to $PATH.
  $ insco vim
 ```
 
-You can specify a version (WIP).
+You can specify a version as an argument.
 
 ```shell
  $ insco vim 7.4
