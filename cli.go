@@ -78,7 +78,7 @@ func binaryDir() string {
 	return homeDir() + "/bin"
 }
 
-func prefixDir() string {
+func basePrefixDir() string {
 	return homeDir() + "/usr/local"
 }
 
@@ -190,7 +190,7 @@ func setup() error {
 		return err
 	}
 
-	prefixDir := prefixDir()
+	prefixDir := basePrefixDir()
 	if err := os.MkdirAll(prefixDir, os.ModePerm); err != nil {
 		return err
 	}
@@ -243,15 +243,11 @@ func (cli *CLI) emacs(version string) error {
 	if err != nil {
 		fmt.Fprintln(cli.errStream, err)
 	}
-	current, err := os.Getwd()
-	if err != nil {
-		fmt.Fprintln(cli.errStream, err)
-	}
-	fmt.Fprintln(cli.outStream, current)
 
 	// Build
 	fmt.Fprintln(cli.outStream, "Building...")
-	out, err := exec.Command("./configure", "--prefix="+prefixDir()+" "+flags).Output()
+	prefixDir := filepath.Join(basePrefixDir(), content)
+	out, err := exec.Command("./configure", "--prefix="+prefixDir, flags).Output()
 	if err != nil {
 		fmt.Fprintln(cli.errStream, err)
 	}
