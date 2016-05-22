@@ -1,8 +1,8 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/jessevdk/go-flags"
 	"io"
 )
 
@@ -11,35 +11,54 @@ const (
 	ExitCodeParserFlagError
 )
 
+func (cli *CLI) showHelp() {
+	// TODO: show usage
+	fmt.Fprintf(cli.errStream, "Usage: \n")
+}
+
 type CLI struct {
 	outStream, errStream io.Writer
 }
 
+type Options struct {
+	OptHelp    bool `short:"h" long:"help" description:"Show this help message and exit"`
+	OptVersion bool `short:"v" long:"version" description:"Print the version and exit"`
+}
+
+func (cli *CLI) parseOptions(args []string) (*Options, []string, error) {
+	opts := &Options{}
+	p := flags.NewParser(opts, flags.PrintErrors)
+	args, err := p.ParseArgs(args)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return opts, args, nil
+}
+
 func (cli *CLI) Run(args []string) int {
-	var version bool
-	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
-	flags.SetOutput(cli.errStream)
-
-	flags.BoolVar(&version, "version", false, "display the version")
-
-	if err := flags.Parse(args[1:]); err != nil {
+	opts, parsedArgs, err := cli.parseOptions(args)
+	if err != nil {
 		return ExitCodeParserFlagError
 	}
 
-	if version {
+	if opts.OptHelp {
+		cli.showHelp()
+		return ExitCodeOK
+	}
+
+	if opts.OptVersion {
 		fmt.Fprintf(cli.errStream, "%s: v%s\n", Name, Version)
 		return ExitCodeOK
 	}
 
-	parsedArgs := flags.Args()
-
 	if len(parsedArgs) == 0 {
 		fmt.Fprintf(cli.errStream, "[Error]: You must specify the target.\n")
-		// TODO: show usage
+		cli.showHelp()
 		return ExitCodeParserFlagError
 	}
 
-	fmt.Fprintf(cli.outStream, "insco works!\n")
+	fmt.Println(parsedArgs)
 
 	return ExitCodeOK
 }
