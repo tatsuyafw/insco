@@ -15,10 +15,10 @@ type CLI struct {
 	outStream, errStream io.Writer
 }
 
-func (c *CLI) Run(args []string) int {
+func (cli *CLI) Run(args []string) int {
 	var version bool
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
-	flags.SetOutput(c.errStream)
+	flags.SetOutput(cli.errStream)
 
 	flags.BoolVar(&version, "version", false, "display the version")
 
@@ -27,11 +27,19 @@ func (c *CLI) Run(args []string) int {
 	}
 
 	if version {
-		fmt.Fprintf(c.errStream, "%s: v%s\n", Name, Version)
+		fmt.Fprintf(cli.errStream, "%s: v%s\n", Name, Version)
 		return ExitCodeOK
 	}
 
-	fmt.Fprintf(c.outStream, "insco works!\n")
+	parsedArgs := flags.Args()
+
+	if len(parsedArgs) == 0 {
+		fmt.Fprintf(cli.errStream, "[Error]: You must specify the target.\n")
+		// TODO: show usage
+		return ExitCodeParserFlagError
+	}
+
+	fmt.Fprintf(cli.outStream, "insco works!\n")
 
 	return ExitCodeOK
 }
