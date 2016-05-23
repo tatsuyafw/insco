@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jessevdk/go-flags"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -59,6 +60,31 @@ func setup() error {
 	return nil
 }
 
+func emacs(version string) error {
+	const (
+		DEFAULT_VERSION = "24.5"
+	)
+	if version == "" {
+		version = DEFAULT_VERSION
+	}
+
+	content := "emacs-" + version
+	// comment out temporarily to pass go compilation
+	// archFile := content + ".tar.gz"
+	// mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
+	// flags := "--without-x"
+
+	dir, err := ioutil.TempDir(os.TempDir(), "insco")
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer os.RemoveAll(dir)
+
+	fmt.Println(content)
+	return nil
+}
+
 func (cli *CLI) parseOptions(args []string) (*Options, []string, error) {
 	opts := &Options{}
 	p := flags.NewParser(opts, flags.PrintErrors)
@@ -99,8 +125,9 @@ func (cli *CLI) Run(args []string) int {
 
 	switch target {
 	case "emacs":
+		emacs("") // TODO: pass version if given as a cli argument
 	default:
-
+		// TODO: show usage
 	}
 
 	return ExitCodeOK
