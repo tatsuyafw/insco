@@ -254,7 +254,7 @@ func (cli *CLI) emacs(version string) error {
 	runner.Run(exec.Command("make"))
 	runner.Run(exec.Command("make", "install"))
 
-	if runner.Err() != nil {
+	if err = runner.Err(); err != nil {
 		fmt.Fprintln(cli.errStream, err)
 	}
 
