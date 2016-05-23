@@ -247,24 +247,16 @@ func (cli *CLI) emacs(version string) error {
 
 	// Build
 	fmt.Fprintln(cli.outStream, "Building...")
+	runner := Runner{outStream: cli.outStream}
+
 	prefixDir := filepath.Join(basePrefixDir(), content)
-	out, err := exec.Command("./configure", "--prefix="+prefixDir, flags).Output()
-	if err != nil {
-		fmt.Fprintln(cli.errStream, err)
-	}
-	fmt.Fprintln(cli.outStream, string(out))
+	runner.Run(exec.Command("./configure", "--prefix="+prefixDir, flags))
+	runner.Run(exec.Command("make"))
+	runner.Run(exec.Command("make", "install"))
 
-	out, err = exec.Command("make").Output()
-	if err != nil {
+	if runner.Err() != nil {
 		fmt.Fprintln(cli.errStream, err)
 	}
-	fmt.Fprintln(cli.outStream, string(out))
-
-	out, err = exec.Command("make", "install").Output()
-	if err != nil {
-		fmt.Fprintln(cli.errStream, err)
-	}
-	fmt.Fprintln(cli.outStream, string(out))
 
 	fmt.Fprintln(cli.outStream, "Finished.")
 
