@@ -24,5 +24,5 @@ func (runner *Runner) Run(cmd *exec.Cmd) {
 		runner.err = err
 		return
 	}
-	fmt.Fprintln(runner.outStream, out)
+	fmt.Fprintln(runner.outStream, string(out))
 }
