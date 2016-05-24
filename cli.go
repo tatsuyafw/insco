@@ -5,7 +5,10 @@ import (
 	"github.com/jessevdk/go-flags"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 const (
@@ -24,6 +27,36 @@ type Options struct {
 
 type CLI struct {
 	outStream, errStream io.Writer
+}
+
+// [WIP]
+func downloadFile(url, tempDir string) error {
+	tokens := strings.Split(url, "/")
+	fileName := tokens[len(tokens)-1]
+	downloadedFilePath := filepath.Join(tempDir, fileName)
+	fmt.Println("Downloading", url, "to", downloadedFilePath)
+
+	file, err := os.Create(downloadedFilePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	response, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Error while downloading", url, err)
+		return err
+	}
+	defer response.Body.Close()
+
+	n, err := io.Copy(file, response.Body)
+	if err != nil {
+		fmt.Println("Error while downloading", url, err)
+		return err
+	}
+
+	fmt.Println(n, "bytes downloaded.")
+	return nil
 }
 
 func (cli *CLI) showHelp() {
@@ -70,8 +103,8 @@ func emacs(version string) error {
 
 	content := "emacs-" + version
 	// comment out temporarily to pass go compilation
-	// archFile := content + ".tar.gz"
-	// mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
+	archFile := content + ".tar.gz"
+	mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
 	// flags := "--without-x"
 
 	dir, err := ioutil.TempDir(os.TempDir(), "insco")
@@ -82,6 +115,10 @@ func emacs(version string) error {
 	defer os.RemoveAll(dir)
 
 	fmt.Println(content)
+
+	// Download an archive file
+	downloadFile(mirrorListUrl+"/"+archFile, dir)
+
 	return nil
 }
 
