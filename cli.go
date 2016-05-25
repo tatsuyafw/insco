@@ -184,6 +184,11 @@ func untar(tarball, dir string) error {
 	}
 }
 
+func exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
+
 func setup() error {
 	binaryDir := binaryDir()
 
@@ -208,7 +213,6 @@ func (cli *CLI) emacs(version string) error {
 	}
 
 	content := "emacs-" + version
-	// comment out temporarily to pass go compilation
 	archFile := content + ".tar.gz"
 	mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
 	flags := "--without-x"
@@ -243,6 +247,7 @@ func (cli *CLI) emacs(version string) error {
 	err = os.Chdir(contentDir)
 	if err != nil {
 		fmt.Fprintln(cli.errStream, err)
+		return err
 	}
 
 	// Build
@@ -255,6 +260,17 @@ func (cli *CLI) emacs(version string) error {
 	runner.Run(exec.Command("make", "install"))
 
 	if err = runner.Err(); err != nil {
+		fmt.Fprintln(cli.errStream, err)
+		return err
+	}
+
+	// Create a symbolic link
+	originalBinary := filepath.Join(prefixDir, "bin", "emacs")
+	binaryLink := filepath.Join(binaryDir(), "emacs")
+	if exists(binaryLink) {
+		os.Rename(binaryLink, binaryLink+".org")
+	}
+	if err := os.Symlink(originalBinary, binaryLink); err != nil {
 		fmt.Fprintln(cli.errStream, err)
 	}
 
