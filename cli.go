@@ -1,12 +1,14 @@
 package main
 
 import (
+	"archive/zip"
 	"fmt"
 	"github.com/jessevdk/go-flags"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	_ "os/exec" // temporarily comment out to pass a compilation
 	"path/filepath"
 	"strings"
 )
@@ -155,10 +157,15 @@ func emacs(version string) error {
 		return err
 	}
 
+	// Unzip
+	// unzip(file)
+
 	os.Chdir(dir)
 
-	// Build
 	// TODO
+	// Build
+	// exec.Command("./configure", "--prefix="+prefixDir()+" "+flags).Run()
+	// exec.Command("make")
 
 	return nil
 }
