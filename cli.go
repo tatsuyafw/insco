@@ -30,7 +30,7 @@ type CLI struct {
 }
 
 // [WIP]
-func downloadFile(url, tempDir string) error {
+func downloadFile(url, tempDir string) (downloadedFile string, err error) {
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
 	downloadedFilePath := filepath.Join(tempDir, fileName)
@@ -38,25 +38,25 @@ func downloadFile(url, tempDir string) error {
 
 	file, err := os.Create(downloadedFilePath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Error while downloading", url, err)
-		return err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	n, err := io.Copy(file, response.Body)
 	if err != nil {
 		fmt.Println("Error while downloading", url, err)
-		return err
+		return nil, err
 	}
 
-	fmt.Println(n, "bytes downloaded.")
-	return nil
+	fmt.Println("Downloaded:", fileName)
+	return file, nil
 }
 
 func (cli *CLI) showHelp() {
@@ -107,17 +107,23 @@ func emacs(version string) error {
 	mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
 	// flags := "--without-x"
 
-	dir, err := ioutil.TempDir(os.TempDir(), "insco")
+	dir, err := ioutil.TempDir(os.TempDir(), Name)
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
 	defer os.RemoveAll(dir)
 
-	fmt.Println(content)
-
 	// Download an archive file
-	downloadFile(mirrorListUrl+"/"+archFile, dir)
+	file, err := downloadFile(mirrorListUrl+"/"+archFile, dir)
+	if err != nil {
+		return err
+	}
+
+	os.Chdir(dir)
+
+	// Build
+	// TODO
 
 	return nil
 }
