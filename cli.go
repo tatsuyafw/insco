@@ -66,7 +66,7 @@ func (cli *CLI) showHelp() {
 
 func homeDir() string {
 	homeDir := os.Getenv(HomeEnv)
-	// TODO: error if HOME environment variablie does not exist
+	// TODO: return an error if HOME environment variablie is not set
 	return homeDir
 }
 
