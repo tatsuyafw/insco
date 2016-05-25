@@ -30,7 +30,7 @@ type CLI struct {
 }
 
 // [WIP]
-func downloadFile(url, tempDir string) (downloadedFile string, err error) {
+func downloadFile(url, tempDir string) (filePath string, err error) {
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
 	downloadedFilePath := filepath.Join(tempDir, fileName)
@@ -38,25 +38,25 @@ func downloadFile(url, tempDir string) (downloadedFile string, err error) {
 
 	file, err := os.Create(downloadedFilePath)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer file.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Error while downloading", url, err)
-		return nil, err
+		return "", err
 	}
 	defer response.Body.Close()
 
-	n, err := io.Copy(file, response.Body)
+	_, err = io.Copy(file, response.Body)
 	if err != nil {
 		fmt.Println("Error while downloading", url, err)
-		return nil, err
+		return "", err
 	}
 
 	fmt.Println("Downloaded:", fileName)
-	return file, nil
+	return downloadedFilePath, nil
 }
 
 func (cli *CLI) showHelp() {
