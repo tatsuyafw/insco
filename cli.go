@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	_ "os/exec" // temporarily comment out to pass a compilation
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -29,6 +29,11 @@ type Options struct {
 
 type CLI struct {
 	outStream, errStream io.Writer
+}
+
+func (cli *CLI) showHelp() {
+	// TODO: show usage
+	fmt.Fprintf(cli.errStream, "Usage: \n")
 }
 
 // [WIP]
@@ -59,11 +64,6 @@ func downloadFile(url, tempDir string) (filePath string, err error) {
 
 	fmt.Println("Downloaded:", fileName)
 	return downloadedFilePath, nil
-}
-
-func (cli *CLI) showHelp() {
-	// TODO: show usage
-	fmt.Fprintf(cli.errStream, "Usage: \n")
 }
 
 func homeDir() string {
@@ -113,6 +113,30 @@ func unzip(src, dest string) error {
 	}
 
 	return nil
+}
+
+func gunzip(source, target string) error {
+	reader, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	greader, err := gzip.NewReader(reader)
+	if err != nil {
+		return err
+	}
+	greader.Close()
+
+	target = filepath.Join(target, greader.Name)
+	writer, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	_, err = io.Copy(writer, greader)
+	return err
 }
 
 func setup() error {
