@@ -122,20 +122,20 @@ func gunzip(source, target string) error {
 	}
 	defer reader.Close()
 
-	greader, err := gzip.NewReader(reader)
+	gzipReader, err := gzip.NewReader(reader)
 	if err != nil {
 		return err
 	}
-	greader.Close()
+	gzipReader.Close()
 
-	target = filepath.Join(target, greader.Name)
+	target = filepath.Join(target, gzipReader.Name)
 	writer, err := os.Create(target)
 	if err != nil {
 		return err
 	}
 	defer writer.Close()
 
-	_, err = io.Copy(writer, greader)
+	_, err = io.Copy(writer, gzipReader)
 	return err
 }
 
