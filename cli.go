@@ -198,7 +198,7 @@ func setup() error {
 	return nil
 }
 
-func emacs(version string) error {
+func (cli *CLI) emacs(version string) error {
 	const (
 		DEFAULT_VERSION = "24.5"
 	)
@@ -210,7 +210,7 @@ func emacs(version string) error {
 	// comment out temporarily to pass go compilation
 	archFile := content + ".tar.gz"
 	mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
-	// flags := "--without-x"
+	flags := "--without-x"
 
 	dir, err := ioutil.TempDir(os.TempDir(), Name)
 	if err != nil {
@@ -220,20 +220,56 @@ func emacs(version string) error {
 	defer os.RemoveAll(dir)
 
 	// Download an archive file
-	file, err := downloadFile(mirrorListUrl+"/"+archFile, dir)
+	filePath, err := downloadFile(mirrorListUrl+"/"+archFile, dir)
 	if err != nil {
 		return err
 	}
 
-	// Unzip
-	// unzip(file)
+	// Unzip and Untar
+	tarball, err := gunzip(filePath, dir)
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+		return err
+	}
+	err = untar(tarball, dir)
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+		return err
+	}
+	ext := filepath.Ext(tarball)
+	contentDir := strings.TrimRight(tarball, ext)
 
-	os.Chdir(dir)
+	err = os.Chdir(contentDir)
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+	}
+	current, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+	}
+	fmt.Fprintln(cli.outStream, current)
 
-	// TODO
 	// Build
-	// exec.Command("./configure", "--prefix="+prefixDir()+" "+flags).Run()
-	// exec.Command("make")
+	fmt.Fprintln(cli.outStream, "Building...")
+	out, err := exec.Command("./configure", "--prefix="+prefixDir()+" "+flags).Output()
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+	}
+	fmt.Fprintln(cli.outStream, string(out))
+
+	out, err = exec.Command("make").Output()
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+	}
+	fmt.Fprintln(cli.outStream, string(out))
+
+	out, err = exec.Command("make", "install").Output()
+	if err != nil {
+		fmt.Fprintln(cli.errStream, err)
+	}
+	fmt.Fprintln(cli.outStream, string(out))
+
+	fmt.Fprintln(cli.outStream, "Finished.")
 
 	return nil
 }
@@ -278,7 +314,7 @@ func (cli *CLI) Run(args []string) int {
 
 	switch target {
 	case "emacs":
-		emacs("") // TODO: pass version if given as a cli argument
+		cli.emacs("") // TODO: pass version if given as a cli argument
 	default:
 		// TODO: show usage
 	}
