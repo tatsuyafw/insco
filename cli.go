@@ -1,7 +1,9 @@
 package main
 
 import (
+	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
 	"github.com/jessevdk/go-flags"
 	"io"
@@ -143,6 +145,42 @@ func gunzip(src, dir string) (dst string, err error) {
 	return dst, nil
 }
 
+func untar(tarball, dir string) error {
+	reader, err := os.Open(tarball)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	tarReader := tar.NewReader(reader)
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
+			return err
+		}
+
+		path := filepath.Join(dir, header.Name)
+		info := header.FileInfo()
+		if info.IsDir() {
+			if err := os.MkdirAll(path, info.Mode()); err != nil {
+				return err
+			}
+			continue
+		}
+
+		file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(file, tarReader)
+		if err != nil {
+			return err
+		}
+		file.Close()
+	}
 }
 
 func setup() error {
