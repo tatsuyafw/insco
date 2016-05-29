@@ -115,28 +115,34 @@ func unzip(src, dest string) error {
 	return nil
 }
 
-func gunzip(source, target string) error {
-	reader, err := os.Open(source)
+func gunzip(src, dir string) (dst string, err error) {
+	reader, err := os.Open(src)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer reader.Close()
 
 	gzipReader, err := gzip.NewReader(reader)
 	if err != nil {
-		return err
+		return "", err
 	}
-	gzipReader.Close()
+	defer gzipReader.Close()
 
-	target = filepath.Join(target, gzipReader.Name)
-	writer, err := os.Create(target)
+	dst = filepath.Join(dir, gzipReader.Name)
+	writer, err := os.Create(dst)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer writer.Close()
 
 	_, err = io.Copy(writer, gzipReader)
-	return err
+	if err != nil {
+		return "", err
+	}
+
+	return dst, nil
+}
+
 }
 
 func setup() error {
