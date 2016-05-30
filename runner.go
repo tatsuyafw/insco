@@ -8,7 +8,7 @@ import (
 
 type Runner struct {
 	outStream io.Writer
-	err error
+	err       error
 }
 
 func (runner *Runner) Err() error {
