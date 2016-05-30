@@ -5,7 +5,6 @@ import (
 	"archive/zip"
 	"compress/gzip"
 	"fmt"
-	"github.com/jessevdk/go-flags"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/jessevdk/go-flags"
 )
 
 const (
