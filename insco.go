@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"os"
-)
+import "os"
 
 const Name string = "insco"
 const Version string = "0.0.1"
