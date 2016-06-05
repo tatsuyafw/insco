@@ -214,7 +214,7 @@ func (cli *CLI) emacs(version string) error {
 	content := "emacs-" + version
 	archFile := content + ".tar.gz"
 	mirrorListUrl := "http://ftpmirror.gnu.org/emacs"
-	flags := "--without-x"
+	flags := []string{"--without-x", "--with-gnutls"}
 
 	dir, err := ioutil.TempDir(os.TempDir(), Name)
 	if err != nil {
@@ -254,7 +254,9 @@ func (cli *CLI) emacs(version string) error {
 	runner := Runner{outStream: cli.outStream}
 
 	prefixDir := filepath.Join(basePrefixDir(), content)
-	runner.Run(exec.Command("./configure", "--prefix="+prefixDir, flags))
+	flags = append([]string{"--prefix=" + prefixDir}, flags...)
+
+	runner.Run(exec.Command("./configure", flags...))
 	runner.Run(exec.Command("make"))
 	runner.Run(exec.Command("make", "install"))
 
