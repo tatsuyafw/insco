@@ -39,11 +39,10 @@ func (cli *CLI) showHelp() {
 	fmt.Fprintf(cli.errStream, "Usage: \n")
 }
 
-// [WIP]
-func downloadFile(url, tempDir string) (filePath string, err error) {
+func downloadFile(url, dir string) (filePath string, err error) {
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
-	downloadedFilePath := filepath.Join(tempDir, fileName)
+	downloadedFilePath := filepath.Join(dir, fileName)
 	fmt.Println("Downloading", url, "to", downloadedFilePath)
 
 	file, err := os.Create(downloadedFilePath)
