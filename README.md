@@ -35,6 +35,9 @@ You can specify a version as an argument.
   - Interactive filtering tool
 - [ghq](https://github.com/motemen/ghq)
   - Manage remote repository clones
+  
+### Misc
+- git-branch-activity
 
 [travis-image]: https://img.shields.io/travis/tatsuyafw/insco.svg
 [travis-url]: https://travis-ci.org/tatsuyafw/insco
