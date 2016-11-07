@@ -4,7 +4,7 @@ set -u
 
 BINARY_DIR="$HOME/bin"
 PREFIX_DIR="$HOME/usr/local"
-SUPPORTS=("emacs" "ghq" "git" "peco" "vim")
+SUPPORTS=("emacs" "ghq" "git" "git-branch-activity" "peco" "vim")
 TARGET=${1:-}
 VERSION=${2:-}
 
@@ -113,6 +113,15 @@ function git() {
     ln -s $PREFIX_DIR/$CONTENT/bin/git $BINARY_DIR/git
 }
 
+function git-branch-activity() {
+    FILE_URL="https://gist.githubusercontent.com/uasi/ec9978d793df35184b33/raw/git-branch-activity.sh"
+
+    setup
+
+    $FETCH_CMD $BINARY_DIR/git-branch-activity $FILE_URL
+    chmod +x $BINARY_DIR/git-branch-activity
+}
+
 function peco() {
     TARGET_VERSION=${VERSION:-0.3.5}
     CONTENT="peco_linux_amd64"
@@ -176,6 +185,9 @@ case $TARGET in
         ;;
     git)
         git
+        ;;
+    git-branch-activity)
+        git-branch-activity
         ;;
     peco)
         peco
