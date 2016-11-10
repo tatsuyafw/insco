@@ -1,11 +1,4 @@
-package main
-
-import "os"
+package insco
 
 const Name string = "insco"
 const Version string = "0.0.1"
-
-func main() {
-	cli := &CLI{outStream: os.Stdout, errStream: os.Stderr}
-	os.Exit(cli.Run(os.Args[1:]))
-}
