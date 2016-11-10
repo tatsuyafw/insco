@@ -1,4 +1,4 @@
-package insco
+package main
 
 import (
 	"archive/tar"
@@ -30,12 +30,12 @@ type Options struct {
 }
 
 type CLI struct {
-	OutStream, ErrStream io.Writer
+	outStream, errStream io.Writer
 }
 
 func (cli *CLI) showHelp() {
 	// TODO: show usage
-	fmt.Fprintf(cli.ErrStream, "Usage: \n")
+	fmt.Fprintf(cli.errStream, "Usage: \n")
 }
 
 func homeDir() string {
@@ -202,12 +202,12 @@ func (cli *CLI) emacs(version string) error {
 	// Unzip and Untar
 	tarball, err := gunzip(filePath, dir)
 	if err != nil {
-		fmt.Fprintln(cli.ErrStream, err)
+		fmt.Fprintln(cli.errStream, err)
 		return err
 	}
 	err = untar(tarball, dir)
 	if err != nil {
-		fmt.Fprintln(cli.ErrStream, err)
+		fmt.Fprintln(cli.errStream, err)
 		return err
 	}
 	ext := filepath.Ext(tarball)
@@ -215,13 +215,13 @@ func (cli *CLI) emacs(version string) error {
 
 	err = os.Chdir(contentDir)
 	if err != nil {
-		fmt.Fprintln(cli.ErrStream, err)
+		fmt.Fprintln(cli.errStream, err)
 		return err
 	}
 
 	// Build
-	fmt.Fprintln(cli.OutStream, "Building...")
-	runner := Runner{outStream: cli.OutStream}
+	fmt.Fprintln(cli.outStream, "Building...")
+	runner := Runner{outStream: cli.outStream}
 
 	prefixDir := filepath.Join(basePrefixDir(), content)
 	flags = append([]string{"--prefix=" + prefixDir}, flags...)
@@ -231,7 +231,7 @@ func (cli *CLI) emacs(version string) error {
 	runner.Run(exec.Command("make", "install"))
 
 	if err = runner.Err(); err != nil {
-		fmt.Fprintln(cli.ErrStream, err)
+		fmt.Fprintln(cli.errStream, err)
 		return err
 	}
 
@@ -242,10 +242,10 @@ func (cli *CLI) emacs(version string) error {
 		os.Rename(binaryLink, binaryLink+".org")
 	}
 	if err := os.Symlink(originalBinary, binaryLink); err != nil {
-		fmt.Fprintln(cli.ErrStream, err)
+		fmt.Fprintln(cli.errStream, err)
 	}
 
-	fmt.Fprintln(cli.OutStream, "Finished.")
+	fmt.Fprintln(cli.outStream, "Finished.")
 
 	return nil
 }
@@ -273,12 +273,12 @@ func (cli *CLI) Run(args []string) int {
 	}
 
 	if opts.OptVersion {
-		fmt.Fprintf(cli.ErrStream, "%s: v%s\n", Name, Version)
+		fmt.Fprintf(cli.errStream, "%s: v%s\n", Name, Version)
 		return ExitCodeOK
 	}
 
 	if len(parsedArgs) == 0 {
-		fmt.Fprintf(cli.ErrStream, "[Error]: You must specify the target.\n")
+		fmt.Fprintf(cli.errStream, "[Error]: You must specify the target.\n")
 		cli.showHelp()
 		return ExitCodeParserFlagError
 	}

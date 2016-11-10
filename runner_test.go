@@ -1,4 +1,4 @@
-package insco
+package main
 
 import (
 	"os/exec"
